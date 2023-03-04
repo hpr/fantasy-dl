@@ -1,3 +1,5 @@
+import './App.css';
+
 import {
   AppShell,
   Avatar,
@@ -28,7 +30,6 @@ import {
   Paper,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import { AthleteCard } from './AthleteCard';
 import { AthleticsEvent, AuthPage, DLMeet, Entries, Team } from './types';
 import { Store } from './Store';
 import { MainLinks } from './MainLinks';
@@ -36,6 +37,7 @@ import { User } from './User';
 import { BrandGit, Calculator, Check, Dots, Mail, Run } from 'tabler-icons-react';
 import { PICKS_PER_EVT, scoring, SERVER_URL } from './const';
 import { isEmail, useForm } from '@mantine/form';
+import { AthleteDnd } from './AthleteDnd';
 
 const evtSort = (a: string, b: string) => {
   const DIGITS = '0123456789';
@@ -88,7 +90,6 @@ export default function App() {
     if (Object.keys(myTeam).length) localStorage.setItem('myTeam', JSON.stringify(myTeam));
   }, [myTeam]);
 
-  const myTeamPicks = myTeam[meet]?.[evt!] ?? [];
   const numPicks = Object.values(myTeam[meet] ?? {}).flat().length;
   const numMaxPicks = Object.keys(entries?.[meet] ?? {}).length * PICKS_PER_EVT;
   const arePicksComplete = numPicks === numMaxPicks;
@@ -397,68 +398,7 @@ export default function App() {
               </Accordion>
             </>
           ) : (
-            <>
-              <Paper shadow="xl" radius="xl" p="xl" withBorder>
-                <Stack align="center">
-                  {myTeamPicks.length ? (
-                    <Tooltip.Group openDelay={0} closeDelay={100}>
-                      <Avatar.Group spacing="xs">
-                        {myTeamPicks.map(({ id, lastName }, i) => (
-                          <Tooltip
-                            key={i}
-                            withArrow
-                            label={`${
-                              i === 0 ? 'Event Captain' : i === 1 ? 'Secondary' : 'Backup'
-                            }: ${lastName}`}
-                            events={{ hover: true, focus: true, touch: true }}
-                          >
-                            <Avatar
-                              size={i === 0 ? 'xl' : i === 1 ? 'lg' : 'md'}
-                              src={`img/avatars/${id}_128x128.png`}
-                              radius="xl"
-                            />
-                          </Tooltip>
-                        ))}
-                      </Avatar.Group>
-                    </Tooltip.Group>
-                  ) : (
-                    <Text>Select an event captain, secondary pick, and backup pick below</Text>
-                  )}
-                  {myTeamPicks.length == PICKS_PER_EVT ? <Check size={30} /> : <Dots size={30} />}
-                </Stack>
-              </Paper>
-
-              <Title order={1}>{evt}</Title>
-              {/* Event time:{' '}
-          {new Date(entries?.[meet]?.[evt!]?.date!).toLocaleTimeString().replace(':00 ', ' ')} */}
-              <SimpleGrid
-                cols={4}
-                breakpoints={[
-                  { maxWidth: 'sm', cols: 1 },
-                  { maxWidth: 'md', cols: 2 },
-                  { maxWidth: 'lg', cols: 3 },
-                ]}
-              >
-                {entries?.[meet]?.[evt!]?.entrants.map((entrant) => {
-                  const { id, firstName, lastName, pb, sb, nat } = entrant;
-                  return (
-                    <AthleteCard
-                      key={id}
-                      avatar={`img/avatars/${id}_128x128.png`}
-                      meet={meet}
-                      event={evt!}
-                      entrant={entrant}
-                      name={`${firstName} ${lastName}`}
-                      job={nat}
-                      stats={[
-                        { label: 'PB', value: pb! },
-                        { label: 'SB', value: sb! },
-                      ].filter((x) => x.value)}
-                    />
-                  );
-                })}
-              </SimpleGrid>
-            </>
+            entries && evt && <AthleteDnd entries={entries} evt={evt} meet={meet} />
           )}
         </Stack>
       </AppShell>
