@@ -235,7 +235,18 @@ export function AthleteCard({
       </Modal>
       {tableView ? (
         <tr onClick={showAndCacheDetails} style={{ cursor: 'pointer' }}>
-          <td>{name}</td>
+          <td>
+            <Group>
+              <Avatar
+                src={avatar}
+                size={25}
+                radius={25}
+                sx={{ border: `1px solid ${mantineGray}` }}
+                mr={-5}
+              />
+              {name}
+            </Group>
+          </td>
           {/* <td>{entrant.team}</td>
           <td>{job}</td> */}
           <td>{entrant.sb}</td>
@@ -248,13 +259,15 @@ export function AthleteCard({
               onClick={addToTeam}
               disabled={!isOnTeam && team.length >= PICKS_PER_EVT}
               leftIcon={<AddToTeamButtonIcon size={20} />}
-            >{(() => {
-              if (isOnTeam) return 'Remove';
-              if (team.length === 0) return 'Captain';
-              if (team.length === 1) return 'Second.';
-              if (team.length < PICKS_PER_EVT) return 'Backup';
-              return 'Full';
-            })()}</Button>
+            >
+              {(() => {
+                if (isOnTeam) return 'Remove';
+                if (team.length === 0) return 'Captain';
+                if (team.length === 1) return 'Second.';
+                if (team.length < PICKS_PER_EVT) return 'Backup';
+                return 'Full';
+              })()}
+            </Button>
           </td>
         </tr>
       ) : (
